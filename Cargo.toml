@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["crates/*", "examples/fs/*"]
+
+[workspace.package]
+edition = "2024"
+authors = ["Technose02 <technose02@yahoo.de>"]
+license = "MIT"
+
+[workspace.dependencies]
+adk-rust = { version = "0.2.1" }
+serde = { version = "1.0.228" }
+tokio = { version = "1.49.0" }
+schemars = { version = "0.8.22" }
+aat-fs = { path = "crates/aat-fs" }
