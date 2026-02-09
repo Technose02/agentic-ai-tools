@@ -1,4 +1,8 @@
-use crate::error::{ValidationErrorReason, accessreason::AccessErrorReason};
+use std::path::PathBuf;
+
+use crate::error::{
+    DeserializeReason, SerializeReason, ValidationErrorReason, accessreason::AccessErrorReason,
+};
 pub struct ErrorTranslatorDe;
 
 impl super::ErrorTranslator for ErrorTranslatorDe {
@@ -39,6 +43,36 @@ impl super::ErrorTranslator for ErrorTranslatorDe {
             } => format!(
                 "Die Datei unter Pfad '{path:#?}' ist nur {filesize} Bytes gross, es kann also nicht bis position {target_position} gelesen werden.",
             ),
+
+            ValidationErrorReason::FileDoesNotExist(path) => format!(
+                "Der Pfad '{path:#?}' zu der Datei ist ungueltig, weil es die Datei nicht gibt."
+            ),
+
+            ValidationErrorReason::PathIsNotAFile(path) => format!(
+                "Der Pfad '{path:#?}' zu der Datei ist ungueltig, weil er nicht auf eine Datei zeigt."
+            ),
+        }
+    }
+
+    fn translate_deserialize(
+        reason: DeserializeReason,
+        serdejsonserror: adk_rust::serde_json::Error,
+    ) -> String {
+        match reason {
+            DeserializeReason::Parameters => {
+                format!("Fehler beim Deserialisieren der Parameter: {serdejsonserror}")
+            }
+        }
+    }
+
+    fn translate_serialize(
+        reason: SerializeReason,
+        serdejsonserror: adk_rust::serde_json::Error,
+    ) -> String {
+        match reason {
+            SerializeReason::Result => {
+                format!("Fehler beim Serialisieren des Ergebnisses: {serdejsonserror}")
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::error::{AccessErrorReason, ValidationErrorReason};
+use crate::error::{AccessErrorReason, DeserializeReason, SerializeReason, ValidationErrorReason};
 pub struct ErrorTranslatorEn;
 
 impl super::ErrorTranslator for ErrorTranslatorEn {
@@ -32,6 +32,7 @@ impl super::ErrorTranslator for ErrorTranslatorEn {
             ValidationErrorReason::OffsetAtOrBehindEOF(path, offset) => format!(
                 "offset {offset} lies behind or exactly at the end of the file at '{path:#?}'"
             ),
+
             ValidationErrorReason::ReadBehindEOF {
                 path,
                 filesize,
@@ -39,6 +40,34 @@ impl super::ErrorTranslator for ErrorTranslatorEn {
             } => format!(
                 "the size of file at '{path:#?}' is only {filesize} bytes, so you cannot read from it up to position {target_position}",
             ),
+
+            ValidationErrorReason::FileDoesNotExist(path) => {
+                format!("The path '{path:#?}' to the file is invalid as that file does not exist.")
+            }
+
+            ValidationErrorReason::PathIsNotAFile(path) => format!(
+                "The path '{path:#?}' to the file is invalid as it does not point at a file."
+            ),
+        }
+    }
+
+    fn translate_deserialize(
+        reason: DeserializeReason,
+        serdejsonserror: adk_rust::serde_json::Error,
+    ) -> String {
+        match reason {
+            DeserializeReason::Parameters => {
+                format!("error deserializing parameters: {serdejsonserror}")
+            }
+        }
+    }
+
+    fn translate_serialize(
+        reason: SerializeReason,
+        serdejsonserror: adk_rust::serde_json::Error,
+    ) -> String {
+        match reason {
+            SerializeReason::Result => format!("error serializing result: {serdejsonserror}"),
         }
     }
 }

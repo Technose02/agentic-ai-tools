@@ -2,6 +2,8 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum ValidationErrorReason {
+    FileDoesNotExist(PathBuf),
+    PathIsNotAFile(PathBuf),
     OffsetAtOrBehindEOF(PathBuf, u64),
     ReadBehindEOF {
         path: PathBuf,
