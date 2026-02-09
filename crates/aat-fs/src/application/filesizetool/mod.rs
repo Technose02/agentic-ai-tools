@@ -16,7 +16,7 @@ use schemars::JsonSchema;
 use serde::{Serialize, de::DeserializeOwned};
 use std::sync::Arc;
 
-// TODO: Make this generic over the inport and related structs somehow
+// TODO: Make this generic over the inport and related structs somehow and put general stuff in a crate aat-core
 
 async fn handler<P, R>(
     service: impl FileSizeToolInPort,
