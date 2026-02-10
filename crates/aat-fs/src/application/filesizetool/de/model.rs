@@ -24,14 +24,14 @@ impl TryFrom<FileSizeParamsDe> for InputParams {
     fn try_from(value: FileSizeParamsDe) -> Result<Self, Self::Error> {
         let path = PathBuf::from(value.path);
         if !path.exists() {
-            return Err(Error::ValidationError(
-                ValidationErrorReason::FileDoesNotExist(path),
-            ));
+            return Err(Error::Validation(ValidationErrorReason::FileDoesNotExist(
+                path,
+            )));
         }
         if !path.is_file() {
-            return Err(Error::ValidationError(
-                ValidationErrorReason::PathIsNotAFile(path),
-            ));
+            return Err(Error::Validation(ValidationErrorReason::PathIsNotAFile(
+                path,
+            )));
         }
         Ok(InputParams { path })
     }

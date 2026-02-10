@@ -22,8 +22,8 @@ pub(crate) trait ErrorTranslator {
 
     fn translate(error: crate::error::Error) -> String {
         match error {
-            Error::AccessError(reason, ioerror) => Self::translate_accesserror(reason, ioerror),
-            Error::ValidationError(reason) => Self::translate_validationserror(reason),
+            Error::Access(reason, ioerror) => Self::translate_accesserror(reason, ioerror),
+            Error::Validation(reason) => Self::translate_validationserror(reason),
             Error::Deserialize(reason, serdejsonserror) => {
                 Self::translate_deserialize(reason, serdejsonserror)
             }

@@ -13,11 +13,11 @@ impl FileSizeFromFilesystemOutPort for SimpleFileSizeAdapter {
             .read(true)
             .open(&path)
             .map_err(|io_error| {
-                Error::AccessError(AccessErrorReason::OpenFileAtPath(path.clone()), io_error)
+                Error::Access(AccessErrorReason::OpenFileAtPath(path.clone()), io_error)
             })?;
 
         file.seek(std::io::SeekFrom::End(0)).map_err(|io_error| {
-            Error::AccessError(AccessErrorReason::MoveToEndOfFile(path.clone()), io_error)
+            Error::Access(AccessErrorReason::MoveToEndOfFile(path.clone()), io_error)
         })
     }
 }

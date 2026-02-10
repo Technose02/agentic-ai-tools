@@ -6,20 +6,13 @@ pub mod service;
 // implementing error should not depend an AdkError, String is a better target
 // make language a general marker type (e.g. "struct DE;") to keep it consistent through layers (add it to generic functions, traits etc.)
 
+pub type PinBoxedFuture<R, E> =
+    std::pin::Pin<Box<dyn std::future::Future<Output = std::result::Result<R, E>> + Send>>;
+
 pub trait DomainService {
     type Params;
     type Result;
     type Error;
 
-    fn invoke(
-        &self,
-        params: Self::Params,
-    ) -> std::pin::Pin<
-        Box<
-            dyn std::future::Future<Output = std::result::Result<Self::Result, Self::Error>> + Send,
-        >,
-    >;
+    fn invoke(&self, params: Self::Params) -> PinBoxedFuture<Self::Result, Self::Error>;
 }
-
-pub type PinBoxedFuture<R, E> =
-    std::pin::Pin<Box<dyn std::future::Future<Output = std::result::Result<R, E>> + Send>>;

@@ -17,8 +17,8 @@ pub trait TError: core::error::Error {
 
 #[derive(Debug)]
 pub enum Error {
-    AccessError(AccessErrorReason, std::io::Error),
-    ValidationError(ValidationErrorReason),
+    Access(AccessErrorReason, std::io::Error),
+    Validation(ValidationErrorReason),
     Deserialize(DeserializeReason, serde_json::Error),
     Serialize(SerializeReason, serde_json::Error),
 }

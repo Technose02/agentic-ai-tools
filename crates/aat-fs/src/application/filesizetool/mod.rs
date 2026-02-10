@@ -1,5 +1,3 @@
-pub(crate) mod model;
-
 use crate::{
     application::{errortranslator::ErrorTranslator, handler},
     domain::{model::filesizetool::InputParams, port::filesizetool::FileSizeToolInPort},
