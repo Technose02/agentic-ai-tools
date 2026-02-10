@@ -1,14 +1,14 @@
 use crate::error::{
     AccessErrorReason, DeserializeReason, Error, SerializeReason, ValidationErrorReason,
 };
-use adk_rust::{error::AdkError, serde_json};
+use adk_rust::serde_json;
 
 mod de;
-use de::ErrorTranslatorDe;
+pub use de::ErrorTranslatorDe;
 mod en;
-use en::ErrorTranslatorEn;
+pub use en::ErrorTranslatorEn;
 
-trait ErrorTranslator {
+pub(crate) trait ErrorTranslator {
     fn translate_accesserror(reason: AccessErrorReason, io_error: std::io::Error) -> String;
 
     fn translate_validationserror(reason: ValidationErrorReason) -> String;
@@ -32,12 +32,4 @@ trait ErrorTranslator {
             }
         }
     }
-}
-
-pub fn translate_de(error: Error) -> AdkError {
-    AdkError::Tool(ErrorTranslatorDe::translate(error))
-}
-
-pub fn translate_en(error: Error) -> AdkError {
-    AdkError::Tool(ErrorTranslatorEn::translate(error))
 }

@@ -1,8 +1,5 @@
-use std::fmt::Display;
-
-mod translator;
 use adk_rust::serde_json;
-pub use translator::{translate_de, translate_en};
+use std::fmt::Display;
 
 mod accessreason;
 pub use accessreason::AccessErrorReason;
@@ -12,6 +9,11 @@ mod deserializereason;
 pub use deserializereason::DeserializeReason;
 mod serializereason;
 pub use serializereason::SerializeReason;
+
+pub trait TError: core::error::Error {
+    fn from_serialize_error(error: serde_json::Error) -> Self;
+    fn from_deserialize_error(error: serde_json::Error) -> Self;
+}
 
 #[derive(Debug)]
 pub enum Error {
@@ -28,4 +30,12 @@ impl Display for Error {
 }
 impl core::error::Error for Error {}
 
-pub type Result<T> = core::result::Result<T, Error>;
+impl TError for Error {
+    fn from_deserialize_error(error: serde_json::Error) -> Self {
+        Error::Deserialize(DeserializeReason::Parameters, error)
+    }
+
+    fn from_serialize_error(error: serde_json::Error) -> Self {
+        Error::Serialize(SerializeReason::Result, error)
+    }
+}

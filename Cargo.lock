@@ -1049,7 +1049,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ex_readfilechunk"
+name = "ex_determine_filesize"
 version = "0.1.0"
 dependencies = [
  "aat-fs",

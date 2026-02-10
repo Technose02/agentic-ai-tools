@@ -1,80 +1,35 @@
 pub(crate) mod model;
 
 use crate::{
-    application::filesizetool::model::{
-        FileSizeParamsDe, FileSizeParamsEn, FileSizeResultDe, FileSizeResultEn,
-    },
+    application::{errortranslator::ErrorTranslator, handler},
     domain::{model::filesizetool::InputParams, port::filesizetool::FileSizeToolInPort},
-    error::{DeserializeReason, Error, SerializeReason, translate_de, translate_en},
+    error::Error,
 };
-use adk_rust::{
-    AdkError,
-    serde_json::{self},
-    tool::FunctionTool,
-};
+use adk_rust::tool::FunctionTool;
 use schemars::JsonSchema;
 use serde::{Serialize, de::DeserializeOwned};
 use std::sync::Arc;
 
-// TODO: Make this generic over the inport and related structs somehow and put general stuff in a crate aat-core
+mod de;
+mod en;
+pub use de::create_file_size_tool_de;
+pub use en::create_file_size_tool_en;
 
-async fn handler<P, R>(
-    service: impl FileSizeToolInPort,
-    args: schemars::_serde_json::Value,
-    error_translator: fn(Error) -> AdkError,
-) -> Result<schemars::_serde_json::Value, AdkError>
-where
-    P: TryInto<InputParams, Error = Error> + DeserializeOwned,
-    R: From<u64> + Serialize,
-{
-    // read, validate and map args
-    let args = serde_json::value::from_value::<P>(args)
-        .map_err(|e| error_translator(Error::Deserialize(DeserializeReason::Parameters, e)))?;
-    let params: InputParams = args.try_into().map_err(error_translator)?;
-
-    // invoke service
-    let size = service
-        .determine_file_size(params)
-        .await
-        .map_err(error_translator)?;
-
-    // map result
-    serde_json::value::to_value(R::from(size))
-        .map_err(|e| error_translator(Error::Serialize(SerializeReason::Result, e)))
-}
-
-fn create_file_size_tool<P, R>(
-    description: &'static str,
-    service: impl FileSizeToolInPort,
-    error_translator: fn(Error) -> AdkError,
-) -> Arc<FunctionTool>
+fn create_file_size_tool<P, R, S, T>(description: &'static str, service: S) -> Arc<FunctionTool>
 where
     P: TryInto<InputParams, Error = Error> + DeserializeOwned + Serialize + JsonSchema,
     R: From<u64> + Serialize,
+    S: FileSizeToolInPort,
+    T: ErrorTranslator + 'static,
 {
     let handler = move |_ctx, args| {
         let service = service.clone();
+        let error_translator = T::translate;
 
-        async move { handler::<P, R>(service, args, error_translator).await }
+        async move { handler::<P, InputParams, R, u64, S, Error>(service, args, error_translator).await }
     };
 
     Arc::new(
         FunctionTool::new("file_size_tool", description, handler).with_parameters_schema::<P>(),
-    )
-}
-
-fn create_file_size_tool_de(service: impl FileSizeToolInPort) -> Arc<FunctionTool> {
-    create_file_size_tool::<FileSizeParamsDe, FileSizeResultDe>(
-        "Ermittelt die Groesse einer lokalen Datei",
-        service,
-        translate_de,
-    )
-}
-
-fn create_file_size_tool_en(service: impl FileSizeToolInPort) -> Arc<FunctionTool> {
-    create_file_size_tool::<FileSizeParamsEn, FileSizeResultEn>(
-        "Determines the size of a local file",
-        service,
-        translate_en,
     )
 }

@@ -1,1 +1,1 @@
-pub(crate) mod filesizetool;
+pub mod filesizetool;
