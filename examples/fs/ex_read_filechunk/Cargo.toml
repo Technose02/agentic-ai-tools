@@ -1,5 +1,5 @@
 [package]
-name = "ex_readfilechunk"
+name = "ex_read_filechunk"
 version = "0.1.0"
 edition.workspace = true
 authors.workspace = true

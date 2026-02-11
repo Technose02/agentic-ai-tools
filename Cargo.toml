@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/*", "examples/fs/ex_determine_filesize"]
+members = ["crates/*", "examples/fs/*"]
 
 [workspace.package]
 edition = "2024"

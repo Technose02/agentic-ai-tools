@@ -1,4 +1,7 @@
-use aat_fs::adapter::SimpleFileSizeAdapter;
+use aat_fs::{
+    adapter::SimpleReadChunkAdapter, create_read_chunk_tool_de,
+    service::readchunktool::ReadChunkToolService,
+};
 use adk_rust::{Launcher, agent::LlmAgentBuilder, model::openai::OpenAIClient};
 use std::sync::Arc;
 
@@ -9,19 +12,8 @@ const MAI_SERVER_APIKEY_VAR: &str = "MAI_SERVER_APIKEY";
 #[tokio::main]
 async fn main() {
     // configure tools
-    let filesize_determiner = Arc::new(SimpleFileSizeAdapter);
     let chunk_reader = Arc::new(SimpleReadChunkAdapter);
-    let filesizetool = create_file_size_tool(
-        FileSizeToolService(filesize_determiner.clone()),
-        translate_de,
-    );
-    let readchunk_tool = create_read_chunk_tool(
-        SizeAwareReadChunkToolService {
-            chunk_reader,
-            filesize_determiner,
-        },
-        translate_de,
-    );
+    let readchunk_tool = create_read_chunk_tool_de(ReadChunkToolService(chunk_reader));
 
     let api_key = {
         dotenv::from_path(".env").expect("could not load environment");
@@ -36,7 +28,6 @@ async fn main() {
     .description("Einfacher Agent")
     .instruction("Du bist ein einfacher Assistent für Docs-as-Code mit Spezialisierung auf Asciidoc und Antora")
     .tool(readchunk_tool)
-    .tool(filesizetool)
     .build()
     .expect("error creating llmagent");
 
@@ -45,3 +36,7 @@ async fn main() {
         .await
         .expect("runner terminated with error");
 }
+
+/* PROMPT:
+Hi. Bitte lies die ersten 200 Bytes aus der Datei 'target/CACHEDIR.TAG' und sag mir, ob es sich um Text oder allgemeine Binärdaten handelt.
+*/

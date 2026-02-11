@@ -1,25 +1,29 @@
-use super::port::{ReadChunkFromFilesystemOutPort, ReadChunkToolInPort};
 use crate::{
-    error::{Error, ValidationErrorReason},
-    filesizetool::FileSizeFromFilesystemOutPort,
+    domain::{
+        PinBoxedFuture,
+        model::readchunktool::{InputParams, ResultContent},
+        port::readchunktool::{ReadChunkFromFilesystemOutPort, ReadChunkToolInPort},
+    },
+    error::Error,
 };
 use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct ReadChunkToolService(pub Arc<dyn ReadChunkFromFilesystemOutPort>);
 
-#[async_trait::async_trait]
 impl ReadChunkToolInPort for ReadChunkToolService {
-    async fn read_chunk(
-        &self,
-        params: super::model::InputParams,
-    ) -> Result<super::model::ResultContent, Error> {
-        self.0
-            .read_chunk(params.path, params.offset, params.to_read)
-            .await
+    fn read_chunk(&self, params: InputParams) -> PinBoxedFuture<ResultContent, Error> {
+        let adapter_impl = self.0.clone();
+
+        Box::pin(async move {
+            adapter_impl
+                .read_chunk(params.path, params.offset, params.to_read)
+                .await
+        })
     }
 }
 
+/*
 #[derive(Clone)]
 pub struct SizeAwareReadChunkToolService {
     pub chunk_reader: Arc<dyn ReadChunkFromFilesystemOutPort>,
@@ -58,3 +62,4 @@ impl ReadChunkToolInPort for SizeAwareReadChunkToolService {
             .await
     }
 }
+*/
