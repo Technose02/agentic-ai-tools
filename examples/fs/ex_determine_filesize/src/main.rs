@@ -36,3 +36,7 @@ async fn main() {
         .await
         .expect("runner terminated with error");
 }
+
+/* PROMPT:
+Hi. Wie groß ist die Datei 'target/CACHEDIR.TAG'?
+*/

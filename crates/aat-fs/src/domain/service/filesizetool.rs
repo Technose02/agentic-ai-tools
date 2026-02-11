@@ -1,6 +1,6 @@
 use crate::{
+    PinBoxedFuture,
     domain::{
-        PinBoxedFuture,
         model::filesizetool::InputParams,
         port::filesizetool::{FileSizeFromFilesystemOutPort, FileSizeToolInPort},
     },

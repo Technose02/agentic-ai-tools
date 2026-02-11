@@ -1,6 +1,6 @@
 use crate::{
+    PinBoxedFuture,
     domain::{
-        PinBoxedFuture,
         model::readchunktool::{InputParams, ResultContent},
         port::readchunktool::{ReadChunkFromFilesystemOutPort, ReadChunkToolInPort},
     },

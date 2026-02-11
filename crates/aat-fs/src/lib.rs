@@ -11,3 +11,6 @@ pub mod service {
 pub mod adapter {
     pub use crate::infrastructure::adapter::*;
 }
+
+pub type PinBoxedFuture<R, E> =
+    std::pin::Pin<Box<dyn std::future::Future<Output = std::result::Result<R, E>> + Send>>;
