@@ -1048,6 +1048,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ex_combined_filetools"
+version = "0.1.0"
+dependencies = [
+ "aat-fs",
+ "adk-rust",
+ "dotenv",
+ "tokio",
+]
+
+[[package]]
 name = "ex_determine_filesize"
 version = "0.1.0"
 dependencies = [

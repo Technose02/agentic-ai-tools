@@ -1,0 +1,12 @@
+[package]
+name = "ex_combined_filetools"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+adk-rust = { workspace = true, features = ["openai"] }
+dotenv = "0.15.0"
+tokio = { workspace = true, features = ["full"] }
+aat-fs = { workspace = true }
