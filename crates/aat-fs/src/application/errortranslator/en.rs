@@ -48,6 +48,10 @@ impl super::ErrorTranslator for ErrorTranslatorEn {
             ValidationErrorReason::PathIsNotAFile(path) => format!(
                 "The path '{path:#?}' to the file is invalid as it does not point at a file."
             ),
+
+            ValidationErrorReason::ReadIsNull => {
+                "The number of bytes to read must be greater than 0".into()
+            }
         }
     }
 

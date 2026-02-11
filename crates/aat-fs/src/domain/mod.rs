@@ -8,11 +8,3 @@ pub mod service;
 
 pub type PinBoxedFuture<R, E> =
     std::pin::Pin<Box<dyn std::future::Future<Output = std::result::Result<R, E>> + Send>>;
-
-pub trait DomainService {
-    type Params;
-    type Result;
-    type Error;
-
-    fn invoke(&self, params: Self::Params) -> PinBoxedFuture<Self::Result, Self::Error>;
-}

@@ -11,10 +11,9 @@ const MAI_SERVER_APIKEY_VAR: &str = "MAI_SERVER_APIKEY";
 
 #[tokio::main]
 async fn main() {
-    // configure tools
-    let filesize_determiner = Arc::new(SimpleFileSizeAdapter);
-    let service = FileSizeToolService(filesize_determiner);
-    let filesizetool = create_file_size_tool_de(service);
+    // configure tool
+    let filesizetool =
+        create_file_size_tool_de(FileSizeToolService(Arc::new(SimpleFileSizeAdapter)));
 
     let api_key = {
         dotenv::from_path(".env").expect("could not load environment");

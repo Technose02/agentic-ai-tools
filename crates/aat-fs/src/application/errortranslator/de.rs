@@ -47,6 +47,10 @@ impl super::ErrorTranslator for ErrorTranslatorDe {
             ValidationErrorReason::PathIsNotAFile(path) => format!(
                 "Der Pfad '{path:#?}' zu der Datei ist ungueltig, weil er nicht auf eine Datei zeigt."
             ),
+
+            ValidationErrorReason::ReadIsNull => {
+                "Die Anzahl der zu lesenden Bytes muss groesser als 0 sein".into()
+            }
         }
     }
 

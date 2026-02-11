@@ -1,6 +1,9 @@
 use crate::{
     application::errortranslator::ErrorTranslator,
-    domain::{model::filesizetool::InputParams, port::filesizetool::FileSizeToolInPort},
+    domain::{
+        model::readchunktool::{InputParams, ResultContent},
+        port::readchunktool::ReadChunkToolInPort,
+    },
     error::{Error, TError},
 };
 use adk_rust::{AdkError, tool::FunctionTool};
@@ -13,14 +16,14 @@ use std::sync::Arc;
 
 mod de;
 mod en;
-pub use de::create_file_size_tool_de;
-pub use en::create_file_size_tool_en;
+pub use de::create_read_chunk_tool_de;
+pub use en::create_read_chunk_tool_en;
 
-fn create_file_size_tool<P, R, S, T>(description: &'static str, service: S) -> Arc<FunctionTool>
+fn create_read_chunk_tool<P, R, S, T>(description: &'static str, service: S) -> Arc<FunctionTool>
 where
     P: TryInto<InputParams, Error = Error> + JsonSchema + Serialize + DeserializeOwned,
-    R: From<u64> + JsonSchema + Serialize,
-    S: FileSizeToolInPort,
+    R: From<ResultContent> + JsonSchema + Serialize,
+    S: ReadChunkToolInPort,
     T: ErrorTranslator + 'static,
 {
     let handler = move |_ctx, args| {
@@ -39,7 +42,7 @@ where
 
             // compute response with domain service
             let res = service
-                .determine_file_size(params)
+                .read_chunk(params)
                 .await
                 .map_err(|e| AdkError::Tool(error_translator(e)))?;
 
@@ -50,7 +53,7 @@ where
     };
 
     Arc::new(
-        FunctionTool::new("file_size_tool", description, handler)
+        FunctionTool::new("read_chunk_tool", description, handler)
             .with_parameters_schema::<P>()
             .with_response_schema::<R>(),
     )
