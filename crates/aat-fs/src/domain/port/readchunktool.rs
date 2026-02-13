@@ -14,6 +14,6 @@ pub trait ReadChunkFromFilesystemOutPort: Sync + Send + 'static {
         &self,
         path: PathBuf,
         offset: u64,
-        size: u64,
+        to_read: u64,
     ) -> PinBoxedFuture<ResultContent, Error>;
 }

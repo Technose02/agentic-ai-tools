@@ -3,6 +3,7 @@ mod domain;
 mod error;
 mod infrastructure;
 
+pub use application::fileexiststool::{create_file_exists_tool_de, create_file_exists_tool_en};
 pub use application::filesizetool::{create_file_size_tool_de, create_file_size_tool_en};
 pub use application::readchunktool::{create_read_chunk_tool_de, create_read_chunk_tool_en};
 pub mod service {
