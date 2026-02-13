@@ -1,4 +1,17 @@
+mod application;
+mod domain;
 mod error;
-pub use error::{Error, translate_de, translate_en};
-pub mod filesizetool;
-pub mod readchunktool;
+mod infrastructure;
+
+pub use application::fileexiststool::{create_file_exists_tool_de, create_file_exists_tool_en};
+pub use application::filesizetool::{create_file_size_tool_de, create_file_size_tool_en};
+pub use application::readchunktool::{create_read_chunk_tool_de, create_read_chunk_tool_en};
+pub mod service {
+    pub use crate::domain::service::*;
+}
+pub mod adapter {
+    pub use crate::infrastructure::adapter::*;
+}
+
+pub type PinBoxedFuture<R, E> =
+    std::pin::Pin<Box<dyn std::future::Future<Output = std::result::Result<R, E>> + Send>>;

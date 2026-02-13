@@ -7,7 +7,6 @@ name = "aat-fs"
 version = "0.1.0"
 dependencies = [
  "adk-rust",
- "async-trait",
  "base64 0.22.1",
  "schemars 0.8.22",
  "serde",
@@ -1049,7 +1048,37 @@ dependencies = [
 ]
 
 [[package]]
-name = "ex_readfilechunk"
+name = "ex_check_file_exists"
+version = "0.1.0"
+dependencies = [
+ "aat-fs",
+ "adk-rust",
+ "dotenv",
+ "tokio",
+]
+
+[[package]]
+name = "ex_combined_filetools"
+version = "0.1.0"
+dependencies = [
+ "aat-fs",
+ "adk-rust",
+ "dotenv",
+ "tokio",
+]
+
+[[package]]
+name = "ex_determine_filesize"
+version = "0.1.0"
+dependencies = [
+ "aat-fs",
+ "adk-rust",
+ "dotenv",
+ "tokio",
+]
+
+[[package]]
+name = "ex_read_filechunk"
 version = "0.1.0"
 dependencies = [
  "aat-fs",

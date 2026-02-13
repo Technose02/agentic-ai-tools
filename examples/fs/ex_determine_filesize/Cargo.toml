@@ -1,13 +1,12 @@
 [package]
-name = "aat-fs"
+name = "ex_determine_filesize"
 version = "0.1.0"
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
 [dependencies]
-serde = { workspace = true, features = ["derive"] }
 adk-rust = { workspace = true, features = ["openai"] }
-schemars = { workspace = true }
-base64 = "0.22.1"
-
+dotenv = "0.15.0"
+tokio = { workspace = true, features = ["full"] }
+aat-fs = { workspace = true }
