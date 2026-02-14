@@ -3,6 +3,8 @@ mod domain;
 mod error;
 mod infrastructure;
 
+pub use application::appendfiletool::{create_append_file_tool_de, create_append_file_tool_en};
+pub use application::createfiletool::{create_create_file_tool_de, create_create_file_tool_en};
 pub use application::fileexiststool::{create_file_exists_tool_de, create_file_exists_tool_en};
 pub use application::filesizetool::{create_file_size_tool_de, create_file_size_tool_en};
 pub use application::readchunktool::{create_read_chunk_tool_de, create_read_chunk_tool_en};

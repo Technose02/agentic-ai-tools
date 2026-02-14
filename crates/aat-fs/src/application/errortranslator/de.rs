@@ -4,8 +4,8 @@ pub struct ErrorTranslatorDe;
 impl super::ErrorTranslator for ErrorTranslatorDe {
     fn translate_accesserror(reason: AccessErrorReason, io_error: std::io::Error) -> String {
         match reason {
-            AccessErrorReason::OpenFileAtPath(path) => format!(
-                "Fehler beim Versuch, die Datei unter Pfad '{path:#?}' zu oeffnen: {io_error}"
+            AccessErrorReason::OpenFileForReading(path) => format!(
+                "Fehler beim Versuch, die Datei unter Pfad '{path:#?}' zum Lesen zu oeffnen: {io_error}"
             ),
 
             AccessErrorReason::MoveToEndOfFile(path) => format!(
@@ -23,6 +23,18 @@ impl super::ErrorTranslator for ErrorTranslatorDe {
             } => format!(
                 "Fehler beim Versuch, aus der Datei unter Pfad '{path:#?}' ab Leseposition {offset} exakt {to_read} Bytes zu lesen: {io_error}"
             ),
+
+            AccessErrorReason::CreateNewFile(path) => {
+                format!("Fehler beim Versuch, die neue Datei '{path:#?}' zu erstellen: {io_error}")
+            }
+
+            AccessErrorReason::OpenFileForWriting(path) => format!(
+                "Fehler beim Versuch, die Datei unter Pfad '{path:#?}' zum Schreiben zu oeffnen: {io_error}"
+            ),
+
+            AccessErrorReason::WriteToFile(path) => {
+                format!("Fehler beim Versuch, in die Datei '{path:#?}' zu schreiben: {io_error}")
+            }
         }
     }
 

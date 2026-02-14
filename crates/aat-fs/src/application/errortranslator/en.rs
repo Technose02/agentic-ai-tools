@@ -4,8 +4,8 @@ pub struct ErrorTranslatorEn;
 impl super::ErrorTranslator for ErrorTranslatorEn {
     fn translate_accesserror(reason: AccessErrorReason, io_error: std::io::Error) -> String {
         match reason {
-            AccessErrorReason::OpenFileAtPath(path) => {
-                format!("error opening file at path '{path:#?}': {io_error}")
+            AccessErrorReason::OpenFileForReading(path) => {
+                format!("error opening file at path '{path:#?}' for reading: {io_error}")
             }
 
             AccessErrorReason::MoveToEndOfFile(path) => format!(
@@ -24,6 +24,18 @@ impl super::ErrorTranslator for ErrorTranslatorEn {
             } => format!(
                 "error reading exactly {to_read} bytes of file at '{path:#?}' starting at position {offset}: {io_error}"
             ),
+
+            AccessErrorReason::CreateNewFile(path) => {
+                format!("error creating a new file '{path:#?}': {io_error}")
+            }
+
+            AccessErrorReason::OpenFileForWriting(path) => {
+                format!("error opening file at path '{path:#?}' for writing: {io_error}")
+            }
+
+            AccessErrorReason::WriteToFile(path) => {
+                format!("error writing to file '{path:#?}': {io_error}")
+            }
         }
     }
 

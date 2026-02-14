@@ -2,7 +2,9 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum AccessErrorReason {
-    OpenFileAtPath(PathBuf),
+    OpenFileForReading(PathBuf),
+
+    OpenFileForWriting(PathBuf),
 
     MoveToEndOfFile(PathBuf),
 
@@ -13,4 +15,8 @@ pub enum AccessErrorReason {
         offset: u64,
         to_read: u64,
     },
+
+    WriteToFile(PathBuf),
+
+    CreateNewFile(PathBuf),
 }

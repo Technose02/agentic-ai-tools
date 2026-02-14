@@ -26,7 +26,7 @@ impl ReadChunkFromFilesystemOutPort for SimpleReadChunkAdapter {
                 .open(&path)
                 .map_err(|io_error| {
                     Error::Access(
-                        crate::error::AccessErrorReason::OpenFileAtPath(path.clone()),
+                        crate::error::AccessErrorReason::OpenFileForReading(path.clone()),
                         io_error,
                     )
                 })?;

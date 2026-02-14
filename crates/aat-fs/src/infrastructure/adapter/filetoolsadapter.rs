@@ -1,7 +1,11 @@
+use adk_rust::telemetry::info;
+
 use crate::{
     domain::{
         model::readchunktool::ResultContent as ReadChunkResultContent,
         port::{
+            appendfiletool::AppendFileFromFilesystemOutPort,
+            createfiletool::CreateFileFromFilesystemOutPort,
             fileexiststool::FileExistsFromFilesystemOutPort,
             filesizetool::FileSizeFromFilesystemOutPort,
             readchunktool::ReadChunkFromFilesystemOutPort,
@@ -10,7 +14,7 @@ use crate::{
     error::{AccessErrorReason, Error},
 };
 use std::{
-    io::{Read, Seek},
+    io::{Read, Seek, Write},
     path::PathBuf,
 };
 
@@ -26,7 +30,10 @@ impl FileToolsAdapter {
             .read(true)
             .open(&path)
             .map_err(|io_error| {
-                Error::Access(AccessErrorReason::OpenFileAtPath(path.clone()), io_error)
+                Error::Access(
+                    AccessErrorReason::OpenFileForReading(path.clone()),
+                    io_error,
+                )
             })?;
 
         file.seek(std::io::SeekFrom::End(0)).map_err(|io_error| {
@@ -46,7 +53,7 @@ impl FileToolsAdapter {
             .open(&path)
             .map_err(|io_error| {
                 Error::Access(
-                    crate::error::AccessErrorReason::OpenFileAtPath(path.clone()),
+                    crate::error::AccessErrorReason::OpenFileForReading(path.clone()),
                     io_error,
                 )
             })?;
@@ -74,6 +81,25 @@ impl FileToolsAdapter {
             Ok(text) => Ok(ReadChunkResultContent::Text(text)),
             Err(e) => Ok(ReadChunkResultContent::Binary(e.into_bytes())),
         }
+    }
+
+    fn create_file(&self, path: PathBuf) -> Result<(), Error> {
+        _ = std::fs::File::options()
+            .create_new(true)
+            .write(true)
+            .open(&path)
+            .map_err(|e| Error::Access(AccessErrorReason::CreateNewFile(path), e))?;
+        Ok(())
+    }
+
+    fn append_text_to_file(&self, path: PathBuf, text: String) -> Result<(), Error> {
+        let mut file = std::fs::File::options()
+            .append(true)
+            .open(&path)
+            .map_err(|e| Error::Access(AccessErrorReason::OpenFileForWriting(path.clone()), e))?;
+        file.write(text.as_bytes())
+            .map_err(|e| Error::Access(AccessErrorReason::WriteToFile(path), e))?;
+        Ok(())
     }
 }
 
@@ -105,6 +131,22 @@ impl ReadChunkFromFilesystemOutPort for FileToolsAdapter {
         to_read: u64,
     ) -> crate::PinBoxedFuture<ReadChunkResultContent, Error> {
         let res = self.read_chunk(path, offset, to_read);
+        Box::pin(async move { res })
+    }
+}
+
+impl CreateFileFromFilesystemOutPort for FileToolsAdapter {
+    fn create_new_file(&self, path: PathBuf) -> crate::PinBoxedFuture<(), Error> {
+        info!("creating new file '{path:#?}'");
+        let res = self.create_file(path);
+
+        Box::pin(async move { res })
+    }
+}
+
+impl AppendFileFromFilesystemOutPort for FileToolsAdapter {
+    fn append_file(&self, path: PathBuf, text: String) -> crate::PinBoxedFuture<(), Error> {
+        let res = self.append_text_to_file(path, text);
         Box::pin(async move { res })
     }
 }
